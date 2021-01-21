@@ -76,7 +76,6 @@ public class ExpenseTracker {
 							break;
 						} catch (ParseException e) {
 							System.out.println("Enter valid date in format(dd/mm/yyyy)");
-							scanner.nextLine();
 						} catch (IllegalArgumentException e) {
 							System.out.println("Enter valid transaction mode");
 						} catch (InputMismatchException e) {
