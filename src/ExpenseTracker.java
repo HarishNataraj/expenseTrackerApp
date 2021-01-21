@@ -58,19 +58,31 @@ public class ExpenseTracker {
 			case 4:
 				operations = new GetCategory();
 				category = userOperations(operations, userA);
-				if(category == null) {
+				if (category == null) {
 					System.out.println("No such category found");
 				} else {
-					System.out.println("Enter transaction date (dd/mm/yyyy): ");
-					transactionDate = getDate();
-					System.out.println("Enter transaction amount : ");
-					transactionAmount = getTransactionAmount();
-					System.out.println("Enter mode of payment :");
-					System.out.println("Available modes:");
-					for(TransactionMode mode : TransactionMode.values()) {
-						System.out.println(mode);
+					while (true) {
+						try {
+							System.out.println("Enter transaction date (dd/mm/yyyy): ");
+							transactionDate = validateDate(scanner.next());
+							System.out.println("Enter transaction amount : ");
+							transactionAmount = validateTransactionAmount(scanner.nextDouble());
+							System.out.println("Enter mode of payment :");
+							System.out.println("Available modes:");
+							for (TransactionMode mode : TransactionMode.values()) {
+								System.out.println(mode);
+							}
+							transactionMode = validateTransactionMode(scanner.next().toUpperCase());
+							break;
+						} catch (ParseException e) {
+							System.out.println("Enter valid date in format(dd/mm/yyyy)");
+							scanner.nextLine();
+						} catch (IllegalArgumentException e) {
+							System.out.println("Enter valid transaction mode");
+						} catch (InputMismatchException e) {
+							System.out.println("Amount entered is invalid");
+						}
 					}
-					transactionMode = getTransactionMode();
 					category.makeTransaction(transactionDate, transactionAmount, transactionMode);
 				}
 				break;
@@ -120,52 +132,25 @@ public class ExpenseTracker {
 		expenseCalculator.calculateExpense(user);
 	}
 	
-	public static  double getTransactionAmount() {
-		double input;
-		 while(true) {
-	            try{
-	            	input = scanner.nextDouble();
-	            	if(input < 1) {
-	            		throw new InputMismatchException("Input cannot be negavtive or zero");
-	            	}
-	                return input;
-	            } catch (InputMismatchException e) {
-	            	System.out.println(e.getMessage()+"\n"
-	            						+"Enter a valid transaction amount");
-	                scanner.nextLine();
-	            }
-	        }
-	}
-	
-	public static String getTransactionMode() {
-		String input;
-		while(true) {
-			input = scanner.next().toUpperCase();
-			try {
-				TransactionMode mode = TransactionMode.valueOf(input);
-				return mode.toString();
-			} catch (IllegalArgumentException e) {
-				System.out.println("Invalid payment mode \n"
-									+"Enter valid transaction mode");
-				scanner.nextLine();
-			}
+	public static double validateTransactionAmount(double input) throws InputMismatchException {
+		if (input < 1) {
+			throw new InputMismatchException();
 		}
-		
+		return input;
 	}
-	
-	public static String getDate() {
-		String input;
-		while(true) {
-			input = scanner.next();
-			try {
-				return (dateFormat.parse(input)).toString();
-			} catch (ParseException e) {
-				System.out.println("Enter valid date in format (dd/mm/yyyy)");
-				System.out.println(".........................................");
-				scanner.nextLine();
-			}
+
+	public static String validateTransactionMode(String input) throws IllegalArgumentException {
+		if (TransactionMode.valueOf(input) == null) {
+			throw new IllegalArgumentException();
+		} else {
+			TransactionMode mode = TransactionMode.valueOf(input);
+			return mode.toString();
 		}
-		
+
+	}
+
+	public static String validateDate(String input) throws ParseException {
+		return (dateFormat.parse(input)).toString();
 	}
 
 }
