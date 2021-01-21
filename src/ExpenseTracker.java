@@ -5,51 +5,50 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ExpenseTracker {
-	static Scanner scanner  = new Scanner(System.in);
+	static Scanner scanner = new Scanner(System.in);
 	static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
+
 	public enum TransactionMode {
-		CASH,
-		UPI,
-		CARD
+		CASH, UPI, CARD
 	}
 
 	public static void main(String[] args) {
 		UserOperations operations;
 		ExpenseCalculator expenseCalculator;
 		Category category;
-		
+
 		int option = 0;
 		String transactionDate;
 		double transactionAmount;
 		String transactionMode;
-		
+
 		User userA = new User("UserA");
-		
+
 		printMenu();
-		
+
 		boolean exit = false;
-		while(!exit) {
+		while (!exit) {
 			System.out.println("Enter option : ");
 			option = scanner.nextInt();
 			switch (option) {
 			case 1:
 				operations = new AddCategory();
 				category = userOperations(operations, userA);
-				if(category == null) {
+				if (category == null) {
 					System.out.println("Category already exists");
 				}
 				break;
 			case 2:
 				ArrayList<Category> categoryList = userA.getCategories();
-				for(int i = 0; i<categoryList.size();i++) {
+				for (int i = 0; i < categoryList.size(); i++) {
 					category = categoryList.get(i);
-					System.out.println((i+1)+"."+category.getCategoryName());
+					System.out.println((i + 1) + "." + category.getCategoryName());
 				}
 				break;
 			case 3:
 				operations = new DeleteCategory();
 				category = userOperations(operations, userA);
-				if(category == null) {
+				if (category == null) {
 					System.out.println("No such category found");
 				} else {
 					System.out.println("Category deleted");
@@ -64,15 +63,16 @@ public class ExpenseTracker {
 					while (true) {
 						try {
 							System.out.println("Enter transaction date (dd/mm/yyyy): ");
-							transactionDate = validateDate(scanner.next());
+							transactionDate = scanner.next();
 							System.out.println("Enter transaction amount : ");
-							transactionAmount = validateTransactionAmount(scanner.nextDouble());
+							transactionAmount = scanner.nextDouble();
 							System.out.println("Enter mode of payment :");
 							System.out.println("Available modes:");
 							for (TransactionMode mode : TransactionMode.values()) {
 								System.out.println(mode);
 							}
-							transactionMode = validateTransactionMode(scanner.next().toUpperCase());
+							transactionMode = scanner.next().toUpperCase();
+							makeTransaction(transactionDate, transactionAmount, transactionMode, category);
 							break;
 						} catch (ParseException e) {
 							System.out.println("Enter valid date in format(dd/mm/yyyy)");
@@ -83,7 +83,6 @@ public class ExpenseTracker {
 							System.out.println("Amount entered is invalid");
 						}
 					}
-					category.makeTransaction(transactionDate, transactionAmount, transactionMode);
 				}
 				break;
 			case 5:
@@ -109,48 +108,36 @@ public class ExpenseTracker {
 		}
 
 	}
-	
+
 	public static void printMenu() {
-		System.out.println("1.Add catgeory \n"
-							+"2.View all categories \n"
-							+"3.Delete category \n"
-							+"4.Add transaction for category \n"
-							+"5.Calculate total expense \n"
-							+"6.Calculate exspense for each category \n"
-							+"7.Print Menu \n"
-							+"8.Exit");
+		System.out.println("1.Add catgeory \n" + "2.View all categories \n" + "3.Delete category \n"
+				+ "4.Add transaction for category \n" + "5.Calculate total expense \n"
+				+ "6.Calculate exspense for each category \n" + "7.Print Menu \n" + "8.Exit");
 	}
-	
-	public static Category userOperations(UserOperations operationObject,User user) {
+
+	public static Category userOperations(UserOperations operationObject, User user) {
 		String categoryName;
 		System.out.println("Enter category name : ");
 		categoryName = scanner.next();
-		return operationObject.operation(user, categoryName);	
+		return operationObject.operation(user, categoryName);
 	}
-	
+
 	public static void calculateExpense(ExpenseCalculator expenseCalculator, User user) {
 		expenseCalculator.calculateExpense(user);
 	}
-	
-	public static double validateTransactionAmount(double input) throws InputMismatchException {
-		if (input < 1) {
+
+	public static void makeTransaction(String date, double amount, String tMode, Category category)
+			throws ParseException, InputMismatchException, IllegalArgumentException {
+		dateFormat.parse(date);
+		if (amount < 1) {
 			throw new InputMismatchException();
 		}
-		return input;
-	}
-
-	public static String validateTransactionMode(String input) throws IllegalArgumentException {
-		if (TransactionMode.valueOf(input) == null) {
+		if (TransactionMode.valueOf(tMode) == null) {
 			throw new IllegalArgumentException();
 		} else {
-			TransactionMode mode = TransactionMode.valueOf(input);
-			return mode.toString();
+			TransactionMode mode = TransactionMode.valueOf(tMode);
+			tMode = mode.toString();
 		}
-
+		category.makeTransaction(date, amount, tMode);
 	}
-
-	public static String validateDate(String input) throws ParseException {
-		return (dateFormat.parse(input)).toString();
-	}
-
 }
