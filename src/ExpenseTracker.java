@@ -1,13 +1,15 @@
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ExpenseTracker {
 	static Scanner scanner = new Scanner(System.in);
 	static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
-
+	
 	public enum TransactionMode {
 		CASH, UPI, CARD
 	}
@@ -108,24 +110,24 @@ public class ExpenseTracker {
 
 	}
 
-	public static void printMenu() {
+	private static void printMenu() {
 		System.out.println("1.Add catgeory \n" + "2.View all categories \n" + "3.Delete category \n"
 				+ "4.Add transaction for category \n" + "5.Calculate total expense \n"
 				+ "6.Calculate exspense for each category \n" + "7.Print Menu \n" + "8.Exit");
 	}
 
-	public static Category userOperations(UserOperations operationObject, User user) {
+	private static Category userOperations(UserOperations operationObject, User user) {
 		String categoryName;
 		System.out.println("Enter category name : ");
 		categoryName = scanner.next();
 		return operationObject.operation(user, categoryName);
 	}
 
-	public static void calculateExpense(ExpenseCalculator expenseCalculator, User user) {
+	private static void calculateExpense(ExpenseCalculator expenseCalculator, User user) {
 		expenseCalculator.calculateExpense(user);
 	}
 
-	public static void makeTransaction(String date, double amount, String tMode, Category category)
+	private static void makeTransaction(String date, double amount, String tMode, Category category)
 			throws ParseException, InputMismatchException, IllegalArgumentException {
 		dateFormat.parse(date);
 		if (amount < 1) {
