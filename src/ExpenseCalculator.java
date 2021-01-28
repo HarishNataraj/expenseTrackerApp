@@ -1,6 +1,6 @@
 
 public interface ExpenseCalculator {
 	
-	public void calculateExpense(User user);
+	public void calculateExpense(User user) throws CategoryException;
 
 }

@@ -2,7 +2,7 @@
 public class AddCategory implements UserOperations {
 	
 	@Override
-	public Category operation(User user, String arg) {
+	public Category operation(User user, String arg) throws CategoryException{
 		Category newCategory = null;
 		int size = user.getCategories().size();
 		if(size == 0) {
@@ -11,7 +11,7 @@ public class AddCategory implements UserOperations {
 		} else {
 			for(Category category : user.getCategories()) {
 				if(category.getCategoryName().equalsIgnoreCase(arg)) {
-					return null;
+					throw new CategoryException("Category already exists");
 				}
 			}
 			newCategory = new Category(arg);

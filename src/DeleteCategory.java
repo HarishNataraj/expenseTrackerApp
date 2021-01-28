@@ -9,13 +9,14 @@ public class DeleteCategory implements UserOperations {
 	}
 
 	@Override
-	public Category operation(User user, String arg) {
-		category = operations.operation(user, arg);
-		if(category == null) {
-			return null;
-		} else {
+	public Category operation(User user, String arg) throws CategoryException{
+		
+		try {
+			category = operations.operation(user, arg);
 			user.getCategories().remove(category);
 			return category;
+		} catch (CategoryException e) {
+			throw(e);
 		}
 	}
 

@@ -26,7 +26,6 @@ public class ExpenseTracker {
 		
 		menu.printMenu();
 		
-
 		boolean exit = false;
 		boolean makeTransaction = false;
 		while (!exit) {
@@ -34,10 +33,12 @@ public class ExpenseTracker {
 			option = scanner.nextInt();
 			switch (option) {
 			case 1:
-				operations = new AddCategory();
-				category = userOperations(operations, userA);
-				if (category == null) {
-					System.out.println("Category already exists");
+				try {
+					operations = new AddCategory();
+					category = userOperations(operations, userA);
+					System.out.println("Category added");
+				} catch (CategoryException e) {
+					System.out.println(e.getMessage());
 				}
 				break;
 			case 2:
@@ -48,21 +49,18 @@ public class ExpenseTracker {
 				}
 				break;
 			case 3:
-				operations = new DeleteCategory();
-				category = userOperations(operations, userA);
-				if (category == null) {
-					System.out.println("No such category found");
-				} else {
-					System.out.println("Category deleted");
+				try {
+					operations = new DeleteCategory();
+					category = userOperations(operations, userA);
+				} catch (CategoryException e) {
+					System.out.println(e.getMessage());
 				}
 				break;
 			case 4:
 				makeTransaction = true;
-				operations = new GetCategory();
-				category = userOperations(operations, userA);
-				if (category == null) {
-					System.out.println("No such category found");
-				} else {
+				try {
+					operations = new GetCategory();
+					category = userOperations(operations, userA);
 					while (makeTransaction) {
 						try {
 							System.out.println("Enter transaction date (dd/mm/yyyy): ");
@@ -89,15 +87,25 @@ public class ExpenseTracker {
 							}
 						}
 					}
+				} catch (CategoryException e) {
+					System.out.println(e.getMessage());
 				}
 				break;
 			case 5:
-				expenseCalculator = new TotalExpense();
-				calculateExpense.calculate(expenseCalculator, userA);
+				try {
+					expenseCalculator = new TotalExpense();
+					calculateExpense.calculate(expenseCalculator, userA);
+				} catch (CategoryException e) {
+					System.out.println(e.getMessage());
+				}
 				break;
 			case 6:
-				expenseCalculator = new ExpenseByCategory();
-				calculateExpense.calculate(expenseCalculator, userA);
+				try {
+					expenseCalculator = new ExpenseByCategory();
+					calculateExpense.calculate(expenseCalculator, userA);
+				} catch (CategoryException e) {
+					System.out.println(e.getMessage());
+				}
 				break;
 			case 7:
 				menu.printMenu();
@@ -115,12 +123,14 @@ public class ExpenseTracker {
 
 	}
 
-	private static Category userOperations(UserOperations operationObject, User user) {
+	private static Category userOperations(UserOperations operationObject, User user) throws CategoryException{
 		String categoryName;
 		System.out.println("Enter category name : ");
 		categoryName = scanner.next();
-		return operationObject.operation(user, categoryName);
+		try {
+			return operationObject.operation(user, categoryName);
+		} catch (CategoryException e) {
+			throw(e);
+		}
 	}
-
-
 }
