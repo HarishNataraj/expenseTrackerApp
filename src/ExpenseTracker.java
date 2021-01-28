@@ -8,7 +8,6 @@ public class ExpenseTracker {
 	
 	private static MenuItems menu = new MenuItems();
 	private static CreateTransaction createTransaction = new CreateTransaction();
-	private static CalculateExpense calculateExpense = new CalculateExpense();	
 	
 	static Scanner scanner = new Scanner(System.in);
 	
@@ -94,7 +93,7 @@ public class ExpenseTracker {
 			case 5:
 				try {
 					expenseCalculator = new TotalExpense();
-					calculateExpense.calculate(expenseCalculator, userA);
+					expenseCalculator.calculateExpense(userA);
 				} catch (CategoryException e) {
 					System.out.println(e.getMessage());
 				}
@@ -102,7 +101,7 @@ public class ExpenseTracker {
 			case 6:
 				try {
 					expenseCalculator = new ExpenseByCategory();
-					calculateExpense.calculate(expenseCalculator, userA);
+					expenseCalculator.calculateExpense(userA);
 				} catch (CategoryException e) {
 					System.out.println(e.getMessage());
 				}
